@@ -1,6 +1,9 @@
 # London crime data exploration in Spark  [![Build Status](https://travis-ci.org/andersonkmi/kaggle-london-crime-data-spark.svg?branch=master)](https://travis-ci.org/andersonkmi/kaggle-london-crime-data-spark)
 Data exploration using some Kaggle data sets developed in Spark and Scala.
 
+## 0. Initial data set from Kaggle:
+https://www.kaggle.com/jboysen/london-crime/download 
+
 ## 1. Extracted information from the initial data set
 
 Initial program to filter distinct values from the London crime data set. This program currently
