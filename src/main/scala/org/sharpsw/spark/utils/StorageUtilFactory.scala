@@ -18,7 +18,9 @@ object StorageUtilFactory {
       case "--azure" =>
         new AzureUtil("UseDevelopmentStorage=true")
       case "--gcloud" =>
-        new GCPUtil()
+        // Not using GCP utility because of guava conflict with google storage and hadoop binaries
+        // new GCPUtil()
+        new S3Util("https://storage.googleapis.com", "auto", "", "")
       case _ => throw new IllegalArgumentException(s"$cloudStorageProvider is not supported")
     }
   }
