@@ -1,10 +1,13 @@
 package org.sharpsw.spark.utils
 
-import java.io.File
+import java.io.{File, FileOutputStream, PrintStream}
 import java.io.File.separator
+import java.nio.ByteBuffer
+import java.nio.channels.{Channels, WritableByteChannel}
 import java.nio.charset.Charset
 import java.nio.file.{Files, Paths}
 
+import com.google.cloud.ReadChannel
 import com.google.cloud.storage.{Blob, BlobId, BlobInfo, Storage, StorageOptions}
 import org.apache.log4j.Logger
 import org.sharpsw.spark.CmdLineOptions
@@ -16,6 +19,9 @@ import scala.io.{BufferedSource, Source}
  * MVN Repo: https://mvnrepository.com/artifact/com.google.cloud/google-cloud-storage/1.96.0
  * Java google cloud storage examples:
  * https://github.com/googleapis/google-cloud-java/tree/master/google-cloud-examples
+ *
+ * NOTE: GCP Storage Client having issues due to conflicting
+ * dependency versions of Guava library between java google cloud storage library and hadoop-common library
  */
 case class GCPUtil() extends StorageUtil {
 
@@ -38,8 +44,19 @@ case class GCPUtil() extends StorageUtil {
       .toAbsolutePath + separator + outputFileName
 
     val blob: Blob = storage.get(BlobId.of(bucketName, pathToBlob))
-    blob.downloadTo(Paths.get(outputFileAbsolutePath))
-
+    blob.downloadTo(new FileOutputStream(outputFileAbsolutePath))
+//    val reader: ReadChannel = blob.reader()
+//
+//    val writeTo = new PrintStream(new FileOutputStream(outputFileAbsolutePath))
+//    val channel: WritableByteChannel = Channels.newChannel(writeTo)
+//    val bytes: ByteBuffer = ByteBuffer.allocate(64 * 1024)
+//    while (reader.read(bytes) > 0) {
+//      bytes.flip()
+//      channel.write(bytes)
+//      bytes.clear()
+//    }
+//
+//    writeTo.close()
     outputFileAbsolutePath
   }
 
