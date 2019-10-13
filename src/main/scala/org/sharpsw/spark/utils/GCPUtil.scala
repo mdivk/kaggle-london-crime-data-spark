@@ -1,13 +1,14 @@
 package org.sharpsw.spark.utils
 
-import java.io.{File, FileOutputStream, PrintStream}
+import java.io.{File, FileInputStream, FileOutputStream, PrintStream}
 import java.io.File.separator
-import java.nio.ByteBuffer
-import java.nio.channels.{Channels, WritableByteChannel}
+// import java.nio.ByteBuffer
+// import java.nio.channels.{Channels, WritableByteChannel}
 import java.nio.charset.Charset
 import java.nio.file.{Files, Paths}
 
-import com.google.cloud.ReadChannel
+import com.google.auth.oauth2.{GoogleCredentials, ServiceAccountCredentials}
+// import com.google.cloud.ReadChannel
 import com.google.cloud.storage.{Blob, BlobId, BlobInfo, Storage, StorageOptions}
 import org.apache.log4j.Logger
 import org.sharpsw.spark.CmdLineOptions
@@ -22,11 +23,21 @@ import scala.io.{BufferedSource, Source}
  *
  * NOTE: GCP Storage Client having issues due to conflicting
  * dependency versions of Guava library between java google cloud storage library and hadoop-common library
+ *
+ * THIS FILE IS KEPT FOR REFERENCE PURPOSE ONLY.
+ * FOR RUNNING LOCALLY USING SPARK USE GCPS3UTIL
+ *
  */
-case class GCPUtil() extends StorageUtil {
+case class GCPUtil(private val serviceAccountFilePath: String) extends StorageUtil {
 
   @transient private lazy val logger: Logger = Logger.getLogger(getClass.getName)
-  private val storage: Storage = StorageOptions.getDefaultInstance().getService()
+
+  val credentialsPath = new File(serviceAccountFilePath)
+  var credentials: GoogleCredentials =
+    GoogleCredentials.fromStream(new FileInputStream(credentialsPath))
+
+  private val storage: Storage =
+    StorageOptions.newBuilder().setCredentials(credentials).build().getService
 
   override def downloadObject(
     bucketName: String,
@@ -82,8 +93,8 @@ case class GCPUtil() extends StorageUtil {
     try {
       logger.info(s"Uploading file $uploadFileName to Google cloud storage account")
       val contentType = Files.probeContentType(Paths.get(uploadFileName))
-      val blobId = BlobId.of(bucketName, pathToBlob);
-      val blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType).build();
+      val blobId = BlobId.of(bucketName, pathToBlob)
+      val blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType).build()
 
       if (uploadFileName.endsWith(".csv")) {
         val file: BufferedSource = Source.fromFile(uploadFileName, "UTF-8")
