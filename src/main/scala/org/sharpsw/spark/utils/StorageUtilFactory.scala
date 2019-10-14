@@ -12,9 +12,9 @@ object StorageUtilFactory {
       case "--aws-s3" =>
         new AWSS3Util(
           "http://127.0.0.1:9000",
-          Region.AP_Mumbai.toString(),
-          "7EFHH3SM4KDNCHM4I3H0",
-          "zNI+QYy9MMMjMEQFoZ0c+qPI0+7VFT+9514LRA9d")
+          Region.NA_Nowhere.toString(),
+          "7EFHH3SM4KDNCHM4FAKE",
+          "zNI+QYy9MMMjMEQFoZ0c+qPI0+7VFT+9514Lfake")
       case "--azure" =>
         new AzureUtil("UseDevelopmentStorage=true")
       case "--gcloud" =>
