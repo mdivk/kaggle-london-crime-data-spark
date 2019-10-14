@@ -12,7 +12,7 @@ object StorageUtilFactory {
       case "--aws-s3" =>
         new AWSS3Util(
           "http://127.0.0.1:9000",
-          Region.NA_Nowhere.toString(),
+          Region.FAKE.toString(),
           "7EFHH3SM4KDNCHM4FAKE",
           "zNI+QYy9MMMjMEQFoZ0c+qPI0+7VFT+9514Lfake")
       case "--azure" =>
